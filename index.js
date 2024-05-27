@@ -18,10 +18,6 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/weather/:city', async (req, res) => {
-    const city = req.params.city;
-    await getWeather(city)
-});
 app.get('/weather', async (req, res) => {
     try {
         const currentIP = await getIp()
@@ -33,6 +29,12 @@ app.get('/weather', async (req, res) => {
         res.status(500).json({ error: 'Error fetching geolocation data' });
     }
 });
+
+app.get('/weather/:city', async (req, res) => {
+    const city = req.params.city;
+    await getWeather(city, res)
+});
+
 
 
 app.listen( PORT, () => {
