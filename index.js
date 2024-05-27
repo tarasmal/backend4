@@ -1,28 +1,32 @@
 const express = require("express")
 const {join} = require("path");
-const getIp = require("./util/getIp")
 const getWeather = require("./util/getWeather")
+const getServerIP = require("./util/getIp")
 const app = express()
 const axios = require('axios');
 const PORT = 3000
 const ipgeolocationApiKey = "ac5a71156db34075a7b3a330842dc440"
 
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs')
 
-app.set('views', join(__dirname, 'views'));
+app.set('views', join(__dirname, 'views'))
 
+app.set('trust proxy', true)
 
-app.use(express.static('public'));
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index')
 });
 
 app.get('/weather', async (req, res) => {
     try {
-        const currentIP = await getIp()
-        const response = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${ipgeolocationApiKey}&ip=${currentIP}&lang=en&fields=city`);
-        const city = response.data.city;
+        let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        if (clientIp === '::1' || clientIp === '127.0.0.1') {
+            clientIp = await getServerIP()
+        }
+        const response = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${ipgeolocationApiKey}&ip=${clientIp}&lang=en&fields=city`);
+        const city = response.data.city
         await getWeather(city, res)
     } catch (error) {
         console.error('Error fetching geolocation data:', error);

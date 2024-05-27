@@ -1,5 +1,5 @@
 const {get} = require("axios");
-const getIp = async () => {
+const getServerIP = async () => {
     try {
         const response = await get('https://api.ipify.org?format=json');
         return response.data.ip;
@@ -10,4 +10,4 @@ const getIp = async () => {
 };
 
 
-module.exports = getIp
+module.exports = getServerIP
