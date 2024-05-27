@@ -11,8 +11,6 @@ app.set('view engine', 'ejs')
 
 app.set('views', join(__dirname, 'views'))
 
-app.set('trust proxy', true)
-
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
